@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">12_1ShoppingList</string>
+
+    <string name="list_products">Список продуктов</string>
+    <string name="list_clothing">Список одежды</string>
+    <string name="list_household_goods">Список хозтоваров</string>
+    <string name="list_gifts">Список подарков</string>
+
+    <string name="you_choose">Вы хотите купить &#8230;</string>
+    <string name="button_add">Добавить</string>
+    <string name="button_remove">Удалить</string>
+
+
+    <string-array name="list_view_item">
+        <item>Продукты</item>
+        <item>Одежда</item>
+        <item>Хозтовары</item>
+        <item>Подарки</item>
+    </string-array>
+</resources>
