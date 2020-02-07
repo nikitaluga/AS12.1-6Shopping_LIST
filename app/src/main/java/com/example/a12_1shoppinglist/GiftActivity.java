@@ -2,6 +2,7 @@ package com.example.a12_1shoppinglist;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -19,7 +20,8 @@ public class GiftActivity extends AppCompatActivity {
     ListView listView;
     ArrayAdapter<String> arrayAdapter;
     EditText editText;
-    int choiceitemPosition;
+    int choiceItemPosition;
+    private static final String PREFERENCES = "PREFERENCES_GIFT";
 
 
     @Override
@@ -28,6 +30,12 @@ public class GiftActivity extends AppCompatActivity {
         setContentView(R.layout.activity_gift);
 
         arrayList = new ArrayList<>();
+
+        SharedPreferences preferencesRestore = getSharedPreferences(PREFERENCES,MODE_PRIVATE);
+        for (int i = 0; i < preferencesRestore.getInt("length",0); i++){
+            arrayList.add(preferencesRestore.getString(String.valueOf(i),""));
+        }
+
         listView = findViewById(R.id.list_view_gift);
         arrayAdapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_single_choice,arrayList);
         listView.setAdapter(arrayAdapter);
@@ -36,7 +44,7 @@ public class GiftActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                choiceitemPosition = position;
+                choiceItemPosition = position;
             }
         });
     }
@@ -59,9 +67,32 @@ public class GiftActivity extends AppCompatActivity {
             Toast toast = Toast.makeText(this,"Список уже пуст !", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER,0,0);
             toast.show();
-        }else {
-            arrayList.remove(choiceitemPosition);
+        } else {
+            arrayList.remove(choiceItemPosition);
             arrayAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        onSaveData();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        onSaveData();
+    }
+
+    void onSaveData(){
+        String[] items = arrayList.toArray(new String[0]);
+        SharedPreferences preferencesSave = getSharedPreferences(PREFERENCES, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferencesSave.edit();
+        for (int i = 0; i < items.length; i++){
+            editor.putString(String.valueOf(i),items[i]);
+        }
+        editor.putInt("length",items.length);
+        editor.apply();
     }
 }

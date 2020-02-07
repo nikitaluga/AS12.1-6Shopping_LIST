@@ -2,6 +2,7 @@ package com.example.a12_1shoppinglist;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -21,6 +22,7 @@ public class HouseholdGoodsActivity extends AppCompatActivity {
     ArrayAdapter<String> arrayAdapter;
     EditText editText;
     int choiceItemPosition;
+    private static final String PREFERENCES = "PREFERENCES_HOUSE_GOODS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,12 @@ public class HouseholdGoodsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_household_goods);
 
         arrayList = new ArrayList<>();
+
+        SharedPreferences preferencesRestore = getSharedPreferences(PREFERENCES,MODE_PRIVATE);
+        for (int i = 0; i < preferencesRestore.getInt("length",0); i++){
+            arrayList.add(preferencesRestore.getString(String.valueOf(i),""));
+        }
+
         listView = findViewById(R.id.list_view_household_goods);
         arrayAdapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_single_choice,arrayList);
         listView.setAdapter(arrayAdapter);
@@ -63,5 +71,28 @@ public class HouseholdGoodsActivity extends AppCompatActivity {
             arrayList.remove(choiceItemPosition);
             arrayAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        onSaveData();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        onSaveData();
+    }
+
+    void onSaveData(){
+        String[] items = arrayList.toArray(new String[0]);
+        SharedPreferences preferencesSave = getSharedPreferences(PREFERENCES,MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferencesSave.edit();
+        for (int i = 0; i < items.length; i++){
+            editor.putString(String.valueOf(i),items[i]);
+        }
+        editor.putInt("length",items.length);
+        editor.apply();
     }
 }
